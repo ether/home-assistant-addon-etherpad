@@ -1,0 +1,11 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Home Assistant Add-on: Etherpad
+# Exit handler for the proxy. socat shouldn't normally exit; if it does,
+# bring the container down so the supervisor restarts a clean s6 stack.
+# ==============================================================================
+if [[ "${1}" -ne 0 ]] && [[ "${1}" -ne 256 ]]; then
+  bashio::log.warning "Proxy front-man exited (exit=${1}); halting add-on."
+  exec /run/s6/basedir/bin/halt
+fi
+bashio::log.info "Proxy front-man stopped cleanly."

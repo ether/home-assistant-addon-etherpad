@@ -1,5 +1,21 @@
 # Changelog
 
+## 3.1.8
+
+- Fix HA ingress when `ssl: true`. Previously enabling SSL made
+  Etherpad listen HTTPS-only on 9001, but HA's ingress proxy connects
+  HTTP to the backend — so the sidebar / Open Web UI broke.
+  Decoupled internal listener from public port:
+
+    * Etherpad now always listens plain HTTP on 9002.
+    * `ingress_port` is 9002, so HA ingress always speaks HTTP to the
+      backend — works regardless of TLS state.
+    * A `socat` front-man owns port 9001 (the public-facing one) and
+      terminates TLS when `ssl: true`, or plain-TCP forwards when off.
+
+- HEALTHCHECK probes Etherpad directly on 9002 so it stays green even
+  if socat is mid-restart.
+
 ## 3.1.7
 
 - Revert the "copy node + pnpm from upstream" diet from 3.1.6 — the

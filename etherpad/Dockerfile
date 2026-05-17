@@ -20,6 +20,7 @@ RUN apk add --no-cache \
       curl \
       nodejs \
       npm \
+      socat \
       tini \
     && rm -rf /var/cache/apk/*
 
@@ -37,9 +38,7 @@ COPY rootfs/ /
 EXPOSE 9001
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
-  CMD curl -fsSk http://127.0.0.1:9001/ -o /dev/null \
-   || curl -fsSk https://127.0.0.1:9001/ -o /dev/null \
-   || exit 1
+  CMD curl -fsS http://127.0.0.1:9002/ -o /dev/null || exit 1
 
 ARG BUILD_ARCH
 ARG BUILD_DATE

@@ -1,5 +1,5 @@
 name: Etherpad
-version: "3.1.7"
+version: "3.1.8"
 slug: etherpad
 description: Realtime collaborative document editor
 url: https://etherpad.org
@@ -8,7 +8,7 @@ arch:
   - aarch64
   - amd64
 ingress: true
-ingress_port: 9001
+ingress_port: 9002
 ingress_stream: true
 panel_icon: mdi:file-document-edit-outline
 panel_title: Etherpad

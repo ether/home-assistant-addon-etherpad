@@ -102,7 +102,10 @@ for your HA UI, the same `fullchain.pem` works here for free.
 - **Blank Open Web UI** — Etherpad doesn't fully support a
   configurable URL base path. The HA ingress proxy serves a random
   prefix that some legacy bits of Etherpad mis-render. Use the direct
-  port instead.
+  port instead. (Ingress *does* work when `Enable Direct HTTPS` is
+  off — but with it on, the socat front-man terminates TLS for
+  port 9001 while ingress still talks plain HTTP to Etherpad on the
+  internal 9002 port, so both work simultaneously.)
 - **`SSL_ERROR_RX_RECORD_TOO_LONG`** — `ssl` is off but you tried
   HTTPS. Flip the **Enable Direct HTTPS** toggle and restart.
 - **Slow startup (~30 s)** — Etherpad scans installed plugins on

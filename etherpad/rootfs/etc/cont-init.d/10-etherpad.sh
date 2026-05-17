@@ -50,21 +50,23 @@ mkdir -p "$(dirname "${ENV_FILE}")"
       ;;
   esac
 
-  # Ingress: HA proxies through a random base path; Etherpad picks up
-  # X-Forwarded-* headers when trustProxy is true.
-  echo "export PORT=9001"
+  # Etherpad ALWAYS listens plain HTTP on 9002 (the upstream-image setting
+  # default of 9001 is wrong for our front-man pattern below). HA's ingress
+  # proxy connects to this port; the socat front-man re-exposes it as 9001
+  # (with optional TLS) for direct LAN/WAN access.
+  echo "export PORT=9002"
   echo "export IP=0.0.0.0"
 
-  # SSL: HA mounts /ssl/ read-only when `map: ssl` is set. When `ssl: true`,
-  # forward the cert + key paths to Etherpad. The env-var path-prefix is
-  # `EP__` (two trailing underscores) so the SettingsTree split skips its
-  # `EP` root key and lands on `settings.ssl.{key,cert}`. Single-underscore
-  # `EP_ssl__key` puts the value at `settings.EP_ssl.key` — wrong.
+  # SSL: render the socat invocation for /etc/etherpad/proxy. When `ssl: true`
+  # we terminate TLS using HA's mounted /ssl/ certs; otherwise we plain-TCP
+  # forward. The front-man is always present so ingress_port (9002) and
+  # public port (9001) stay decoupled regardless of TLS state.
   if bashio::config.true 'ssl'; then
     certfile=$(bashio::config 'certfile')
     keyfile=$(bashio::config 'keyfile')
-    echo "export EP__ssl__key=/ssl/${keyfile}"
-    echo "export EP__ssl__cert=/ssl/${certfile}"
+    echo "export PROXY_ARGS=\"OPENSSL-LISTEN:9001,reuseaddr,fork,verify=0,cert=/ssl/${certfile},key=/ssl/${keyfile} TCP:127.0.0.1:9002\""
+  else
+    echo "export PROXY_ARGS=\"TCP-LISTEN:9001,reuseaddr,fork TCP:127.0.0.1:9002\""
   fi
 } > "${ENV_FILE}"
 

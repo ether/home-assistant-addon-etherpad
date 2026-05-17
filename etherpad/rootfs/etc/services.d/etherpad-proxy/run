@@ -1,0 +1,15 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Home Assistant Add-on: Etherpad
+# Front-man for port 9001. When ssl=true, terminates TLS using HA's /ssl/
+# certs and forwards plain TCP to Etherpad on 127.0.0.1:9002. When ssl=false,
+# forwards plain TCP straight through. Keeps HA ingress (which always speaks
+# HTTP to the backend on port 9002) decoupled from the public port's TLS
+# state.
+# ==============================================================================
+set -e
+
+. /etc/etherpad/env
+
+bashio::log.info "Proxy front-man: socat ${PROXY_ARGS}"
+exec socat ${PROXY_ARGS}
