@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.1.1
+
+- Drop `db_host`/`db_port`/`db_name`/`db_user`/`db_password` defaults
+  from `options`. `db_port: 0` violated the `port?` schema (must be
+  1–65535), which blocked **Save** in the HA UI even when leaving
+  `db_type: sqlite`. Those fields are only relevant for `mysql`/
+  `postgres` and the schema still accepts them when provided.
+
 ## 3.1.0
 
 - Track upstream Etherpad 3.1.0 release.

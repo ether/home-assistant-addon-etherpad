@@ -1,5 +1,5 @@
 name: Etherpad
-version: "3.1.0"
+version: "3.1.1"
 slug: etherpad
 description: Realtime collaborative document editor
 url: https://etherpad.org
@@ -30,11 +30,6 @@ options:
     page sees the same text. This allows you to collaborate seamlessly on
     documents!
   db_type: sqlite
-  db_host: ""
-  db_port: 0
-  db_name: ""
-  db_user: ""
-  db_password: ""
   trust_proxy: true
   log_level: INFO
 schema:
