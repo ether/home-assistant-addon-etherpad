@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.1.5
+
+- Fix SSL not taking effect with `ssl: true` (browser was getting
+  `SSL_ERROR_RX_RECORD_TOO_LONG`). Etherpad's env-var path split
+  skips its `EP` root, so the prefix needs two trailing underscores:
+  `EP__ssl__key=` not `EP_ssl__key=`. With single-underscore the
+  value landed at `settings.EP_ssl.key`, which Etherpad's HTTP
+  server ignored.
+
 ## 3.1.4
 
 - Optional **direct SSL** on port 9001. Flip `ssl: true` in the addon

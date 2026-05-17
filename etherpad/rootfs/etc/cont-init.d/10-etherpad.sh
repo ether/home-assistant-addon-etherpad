@@ -56,13 +56,15 @@ mkdir -p "$(dirname "${ENV_FILE}")"
   echo "export IP=0.0.0.0"
 
   # SSL: HA mounts /ssl/ read-only when `map: ssl` is set. When `ssl: true`,
-  # forward the cert + key paths to Etherpad via the EP_<setting>__<sub> env
-  # convention (Settings.ts maps EP_ssl__key -> settings.ssl.key, etc.).
+  # forward the cert + key paths to Etherpad. The env-var path-prefix is
+  # `EP__` (two trailing underscores) so the SettingsTree split skips its
+  # `EP` root key and lands on `settings.ssl.{key,cert}`. Single-underscore
+  # `EP_ssl__key` puts the value at `settings.EP_ssl.key` — wrong.
   if bashio::config.true 'ssl'; then
     certfile=$(bashio::config 'certfile')
     keyfile=$(bashio::config 'keyfile')
-    echo "export EP_ssl__key=/ssl/${keyfile}"
-    echo "export EP_ssl__cert=/ssl/${certfile}"
+    echo "export EP__ssl__key=/ssl/${keyfile}"
+    echo "export EP__ssl__cert=/ssl/${certfile}"
   fi
 } > "${ENV_FILE}"
 
