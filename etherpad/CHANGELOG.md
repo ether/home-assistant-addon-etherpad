@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.1.7
+
+- Revert the "copy node + pnpm from upstream" diet from 3.1.6 — the
+  copied binary tree was *larger* than installing fresh via `apk` +
+  `npm install -g pnpm`, so net image size went up by ~40 MB. Back to
+  apk-installed nodejs/npm, with `npm cache clean` to keep what we
+  can. Real diet pass deferred until there's something material to
+  prune (most of the size is Etherpad's own node_modules, which is
+  hard to slim without breaking plugin migration).
+
 ## 3.1.6
 
 - Polish pass toward HA-official-addon quality:

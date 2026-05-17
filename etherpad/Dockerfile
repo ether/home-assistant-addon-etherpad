@@ -14,20 +14,23 @@ ENV ETHERPAD_VERSION=${ETHERPAD_VERSION} \
     NODE_ENV=production \
     ETHERPAD_PRODUCTION=true
 
-# Minimal apk surface: just bash + curl for bashio/HEALTHCHECK; node and
-# pnpm come from the upstream image so we don't re-download them.
 RUN apk add --no-cache \
       bash \
       ca-certificates \
       curl \
+      nodejs \
+      npm \
       tini \
     && rm -rf /var/cache/apk/*
 
-COPY --from=upstream /usr/local/bin/node /usr/local/bin/node
-COPY --from=upstream /usr/local/lib/node_modules/pnpm /usr/local/lib/node_modules/pnpm
-RUN ln -s /usr/local/lib/node_modules/pnpm/bin/pnpm.mjs /usr/local/bin/pnpm
-
 COPY --from=upstream /opt/etherpad-lite /opt/etherpad-lite
+
+# pnpm is needed at runtime for Etherpad's plugin-migration step.
+# Apk's node is smaller than upstream's statically-built binary, so we
+# re-install pnpm rather than copying the larger upstream layout.
+RUN npm install -g pnpm@10.33.0 \
+ && npm cache clean --force \
+ && rm -rf /root/.npm
 
 COPY rootfs/ /
 
