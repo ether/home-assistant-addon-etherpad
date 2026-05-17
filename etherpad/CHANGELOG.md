@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.0
+
+- Track upstream Etherpad 3.1.0 release.
+
 ## 3.0.0 (initial)
 
 - Initial Home Assistant add-on wrapping the upstream

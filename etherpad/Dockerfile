@@ -1,5 +1,5 @@
 ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:3.19
-ARG ETHERPAD_VERSION=3.0.0
+ARG ETHERPAD_VERSION=3.1.0
 
 # ---------------------------------------------------------------------------
 # Stage 1: pull the pre-built Etherpad tree from the official image. Both
