@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.1.2
+
+- Set `init: false`. HA's default (`init: true`) makes docker put tini
+  at PID 1, which fights s6-overlay's "I must be PID 1" assumption and
+  bails with `s6-overlay-suexec: fatal: can only run as pid 1`. Every
+  HA addon built on the home-assistant base image needs this.
+
 ## 3.1.1
 
 - Drop `db_host`/`db_port`/`db_name`/`db_user`/`db_password` defaults
