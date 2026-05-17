@@ -2,10 +2,16 @@
 
 ## 3.1.3
 
-- Enable HA supervisor watchdog (`tcp://[HOST]:[PORT:9001]`). If
-  Etherpad stops responding the supervisor will restart the add-on.
-  "Show in sidebar" and "Auto update" remain user-side toggles that
-  HA doesn't let the addon author default on.
+- Add a Docker HEALTHCHECK that curls `/` on port 9001. The HA
+  supervisor reads this as the watchdog signal and will auto-restart
+  the addon if it stops responding (`120 s` start-period covers
+  Etherpad's plugin-migration warmup).
+- Add a daily `upstream-bump` workflow that polls Docker Hub for new
+  `etherpad/etherpad` releases and auto-commits a version bump,
+  so the addon picks up new Etherpad releases without manual edits.
+- "Show in sidebar" and "Auto update" remain user-side toggles that
+  HA doesn't let the addon author default on; the README points to
+  the right place to flip them.
 
 ## 3.1.2
 

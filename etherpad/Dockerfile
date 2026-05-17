@@ -28,6 +28,9 @@ RUN apk add --no-cache \
       tini \
     && rm -rf /var/cache/apk/*
 
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
+  CMD curl -fsS http://127.0.0.1:9001/ -o /dev/null || exit 1
+
 COPY --from=upstream /opt/etherpad-lite /opt/etherpad-lite
 
 # Upstream uses pnpm as the runtime launcher for `pnpm run prod`.

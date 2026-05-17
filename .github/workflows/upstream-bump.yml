@@ -1,0 +1,64 @@
+name: Auto-bump upstream Etherpad
+
+on:
+  schedule:
+    - cron: "15 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Detect upstream + current versions
+        id: ver
+        run: |
+          set -euo pipefail
+          latest=$(curl -sS "https://hub.docker.com/v2/repositories/etherpad/etherpad/tags/?page_size=100" \
+            | jq -r '.results[].name' \
+            | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
+            | sort -V \
+            | tail -1)
+          current=$(grep -m1 '^ARG ETHERPAD_VERSION=' etherpad/Dockerfile | cut -d= -f2)
+          addon=$(grep -m1 '^version:' etherpad/config.yaml | sed 's/version: *"\?\([^"]*\)"\?/\1/')
+          echo "latest=${latest}"     | tee -a "$GITHUB_OUTPUT"
+          echo "current=${current}"   | tee -a "$GITHUB_OUTPUT"
+          echo "addon=${addon}"       | tee -a "$GITHUB_OUTPUT"
+
+      - name: Bump if upstream is newer
+        if: steps.ver.outputs.latest != steps.ver.outputs.current && steps.ver.outputs.latest != ''
+        env:
+          NEW_UPSTREAM: ${{ steps.ver.outputs.latest }}
+          ADDON_VERSION: ${{ steps.ver.outputs.addon }}
+        run: |
+          set -euo pipefail
+          # Addon version stays monotonic — bump the patch component regardless
+          # of upstream's numbering, so HA always sees an update.
+          IFS=. read -r major minor patch <<< "${ADDON_VERSION}"
+          new_addon="${major}.${minor}.$((patch + 1))"
+          echo "Bumping addon ${ADDON_VERSION} -> ${new_addon}, upstream -> ${NEW_UPSTREAM}"
+
+          sed -i "s/^ARG ETHERPAD_VERSION=.*/ARG ETHERPAD_VERSION=${NEW_UPSTREAM}/" etherpad/Dockerfile
+          sed -i "s/^version: \".*\"/version: \"${new_addon}\"/" etherpad/config.yaml
+
+          tmp=$(mktemp)
+          {
+            echo "# Changelog"
+            echo
+            echo "## ${new_addon}"
+            echo
+            echo "- Track upstream Etherpad ${NEW_UPSTREAM} release."
+            echo
+            tail -n +2 etherpad/CHANGELOG.md
+          } > "$tmp"
+          mv "$tmp" etherpad/CHANGELOG.md
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add etherpad/Dockerfile etherpad/config.yaml etherpad/CHANGELOG.md
+          git commit -m "Auto-bump to upstream Etherpad ${NEW_UPSTREAM} (addon ${new_addon})"
+          git push origin HEAD:main
