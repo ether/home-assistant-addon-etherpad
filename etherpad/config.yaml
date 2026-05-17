@@ -16,7 +16,6 @@ ports:
   "9001/tcp": 9001
 ports_description:
   "9001/tcp": Etherpad web UI (direct access, bypasses ingress)
-webui: "[PROTO:ssl]://[HOST]:[PORT:9001]/"
 map:
   - addon_config:rw
   - share:rw

@@ -9,8 +9,9 @@
   layout, e.g. from the `core_letsencrypt` add-on).
 - HEALTHCHECK now tries HTTP first then HTTPS so it works regardless
   of `ssl` state.
-- `webui:` uses `[PROTO:ssl]` so the "Open Web UI" button switches to
-  `https://` when SSL is enabled.
+- Reach the SSL endpoint directly via `https://<ha-host>:9001/`. The
+  "Open Web UI" button stays bound to ingress because HA's addon
+  linter rejects setting both `webui` and `ingress`.
 
 ## 3.1.3
 
