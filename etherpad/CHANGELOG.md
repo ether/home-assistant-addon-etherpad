@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.1.6
+
+- Polish pass toward HA-official-addon quality:
+  - Localized config UI via `translations/en.yaml` (every option now
+    has a human-readable name and helper description in the HA UI).
+  - In-app `DOCS.md` rendered in HA's Documentation tab.
+  - AppArmor profile (`apparmor.txt`) — capabilities + paths trimmed
+    to what Etherpad actually needs.
+  - `build.yaml` makes the per-arch base image and add-on labels
+    explicit (HA convention).
+  - Re-enabled Cosign signing on built images.
+  - Image diet: dropped `apk add nodejs npm` and the runtime
+    `npm install -g pnpm`; the upstream `etherpad/etherpad` image
+    already ships node + pnpm and we just copy them over.
+  - `backup: hot` + `stage: stable` declared.
+  - Fixed the noisy `Unknown Setting: EP_DIR` startup warning by
+    keeping `EP_DIR` scoped to the run script instead of the
+    container env.
+
 ## 3.1.5
 
 - Fix SSL not taking effect with `ssl: true` (browser was getting

@@ -8,6 +8,11 @@
 # ==============================================================================
 set -e
 
+# Etherpad's settings parser warns on unknown EP_<var> env vars (and EP_DIR
+# isn't a setting), so confine its scope to this run script instead of
+# exporting it to the whole container env.
+EP_DIR=/opt/etherpad-lite
+
 . /etc/etherpad/env
 
 cd "${EP_DIR}/src"

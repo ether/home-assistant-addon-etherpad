@@ -67,4 +67,4 @@ jobs:
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
           build-args: |
             BUILD_FROM=${{ matrix.base }}
-          cosign: "false"
+          cosign: "true"

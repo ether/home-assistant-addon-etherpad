@@ -1,0 +1,27 @@
+name: Feature request
+description: Suggest something new for the Etherpad HA add-on
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For upstream Etherpad feature requests (editor capabilities,
+        new plugins, etc.), file at
+        <https://github.com/ether/etherpad/issues>. This template is
+        for the HA add-on packaging only.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested approach
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
