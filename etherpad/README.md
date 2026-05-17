@@ -46,6 +46,19 @@ If ingress misbehaves (Etherpad does not currently support a configurable
 URL base path), disable it by editing `config.yaml` and use the direct
 port 9001 instead.
 
+## SSL / HTTPS
+
+Set `ssl: true` in the addon Configuration to make Etherpad serve
+HTTPS directly on port 9001. The addon mounts HA's `/ssl/` folder
+read-only; by default it looks for `fullchain.pem` and `privkey.pem`
+(the layout produced by the `core_letsencrypt` add-on or any other
+HA-managed cert). Override `certfile` / `keyfile` if you keep your
+cert under different names.
+
+Tip: the simpler path on a HA box is to keep `ssl: false` and reach
+the pad through Home Assistant's own HTTPS port (ingress / "Open Web
+UI") — your HA frontend's certificate is reused without copying it.
+
 ## Recommended one-time toggles
 
 After install, on the addon's **Info** tab, turn on:

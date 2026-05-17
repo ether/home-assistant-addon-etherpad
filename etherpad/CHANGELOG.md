@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.1.4
+
+- Optional **direct SSL** on port 9001. Flip `ssl: true` in the addon
+  Configuration; HA mounts `/ssl/` read-only and the addon exports
+  `EP_ssl__key` / `EP_ssl__cert` so Etherpad listens HTTPS directly.
+  Defaults to `fullchain.pem` + `privkey.pem` (the standard HA cert
+  layout, e.g. from the `core_letsencrypt` add-on).
+- HEALTHCHECK now tries HTTP first then HTTPS so it works regardless
+  of `ssl` state.
+- `webui:` uses `[PROTO:ssl]` so the "Open Web UI" button switches to
+  `https://` when SSL is enabled.
+
 ## 3.1.3
 
 - Add a Docker HEALTHCHECK that curls `/` on port 9001. The HA

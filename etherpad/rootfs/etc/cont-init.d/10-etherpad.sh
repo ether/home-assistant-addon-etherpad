@@ -54,6 +54,16 @@ mkdir -p "$(dirname "${ENV_FILE}")"
   # X-Forwarded-* headers when trustProxy is true.
   echo "export PORT=9001"
   echo "export IP=0.0.0.0"
+
+  # SSL: HA mounts /ssl/ read-only when `map: ssl` is set. When `ssl: true`,
+  # forward the cert + key paths to Etherpad via the EP_<setting>__<sub> env
+  # convention (Settings.ts maps EP_ssl__key -> settings.ssl.key, etc.).
+  if bashio::config.true 'ssl'; then
+    certfile=$(bashio::config 'certfile')
+    keyfile=$(bashio::config 'keyfile')
+    echo "export EP_ssl__key=/ssl/${keyfile}"
+    echo "export EP_ssl__cert=/ssl/${certfile}"
+  fi
 } > "${ENV_FILE}"
 
 chmod 0600 "${ENV_FILE}"
