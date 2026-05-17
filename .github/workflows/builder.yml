@@ -17,6 +17,7 @@ on:
 permissions:
   contents: read
   packages: write
+  id-token: write
 
 jobs:
   lint:
@@ -32,36 +33,39 @@ jobs:
   build:
     name: Build ${{ matrix.arch }}
     needs: lint
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        arch:
-          - amd64
-          - aarch64
+        include:
+          - arch: amd64
+            os: ubuntu-24.04
+            base: ghcr.io/home-assistant/amd64-base:latest
+          - arch: aarch64
+            os: ubuntu-24.04-arm
+            base: ghcr.io/home-assistant/aarch64-base:latest
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
 
-      - name: Read add-on manifest
+      - name: Read add-on version
         id: manifest
         run: |
           version=$(grep -m1 '^version:' etherpad/config.yaml | sed 's/version: *"\?\([^"]*\)"\?/\1/')
           echo "version=${version}" >> "$GITHUB_OUTPUT"
 
-      - name: Log in to GHCR
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v4
+      - name: Build & push image
+        uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build (and push on non-PR)
-        uses: home-assistant/builder@master
-        with:
-          args: |
-            --${{ matrix.arch }} \
-            --target /data/etherpad \
-            --image "ghcr.io/ether/home-assistant-addon-etherpad-{arch}" \
-            --version "${{ steps.manifest.outputs.version }}" \
-            ${{ github.event_name == 'pull_request' && '--test' || '--docker-hub-check' }}
+          arch: ${{ matrix.arch }}
+          context: ./etherpad
+          image: ghcr.io/${{ github.repository_owner }}/home-assistant-addon-etherpad-${{ matrix.arch }}
+          image-tags: |
+            ${{ steps.manifest.outputs.version }}
+            latest
+          push: ${{ github.event_name != 'pull_request' }}
+          version: ${{ steps.manifest.outputs.version }}
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+          build-args: |
+            BUILD_FROM=${{ matrix.base }}
+            ETHERPAD_VERSION=${{ steps.manifest.outputs.version }}
+          cosign: "false"
