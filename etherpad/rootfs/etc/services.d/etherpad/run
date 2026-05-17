@@ -2,14 +2,15 @@
 # ==============================================================================
 # Home Assistant Add-on: Etherpad
 # Starts Etherpad as a long-running service under s6-overlay.
+# Mirrors the upstream image's CMD (`cd src && node ...`); going through
+# `pnpm run prod` triggers pnpm 10's auto-reinstall which aborts in headless
+# containers (ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY).
 # ==============================================================================
 set -e
 
-# Load rendered config from cont-init.
-# shellcheck source=/dev/null
 . /etc/etherpad/env
 
-cd "${EP_DIR}"
+cd "${EP_DIR}/src"
 
 bashio::log.info "Starting Etherpad ${ETHERPAD_VERSION} on port ${PORT}..."
-exec pnpm run prod
+exec node --require tsx/cjs node/server.ts
