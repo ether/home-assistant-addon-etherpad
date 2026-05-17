@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.1.3
+
+- Enable HA supervisor watchdog (`tcp://[HOST]:[PORT:9001]`). If
+  Etherpad stops responding the supervisor will restart the add-on.
+  "Show in sidebar" and "Auto update" remain user-side toggles that
+  HA doesn't let the addon author default on.
+
 ## 3.1.2
 
 - Set `init: false`. HA's default (`init: true`) makes docker put tini

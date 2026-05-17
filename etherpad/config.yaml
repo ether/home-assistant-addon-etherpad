@@ -1,5 +1,5 @@
 name: Etherpad
-version: "3.1.2"
+version: "3.1.3"
 slug: etherpad
 description: Realtime collaborative document editor
 url: https://etherpad.org
@@ -12,6 +12,7 @@ ingress_port: 9001
 ingress_stream: true
 panel_icon: mdi:file-document-edit-outline
 panel_title: Etherpad
+watchdog: tcp://[HOST]:[PORT:9001]
 ports:
   "9001/tcp": 9001
 ports_description:

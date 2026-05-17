@@ -46,6 +46,17 @@ If ingress misbehaves (Etherpad does not currently support a configurable
 URL base path), disable it by editing `config.yaml` and use the direct
 port 9001 instead.
 
+## Recommended one-time toggles
+
+After install, on the addon's **Info** tab, turn on:
+
+- **Show in sidebar** — gives you a one-click shortcut.
+- **Watchdog** — already pre-enabled via `config.yaml`; HA will
+  TCP-probe the addon on port 9001 and restart on failure.
+- **Auto update** — opt-in for releases of this add-on.
+
+HA doesn't let an addon author force these on for new installs.
+
 ## Security notes
 
 - **Admin passwords are stored in plaintext** in Home Assistant's
