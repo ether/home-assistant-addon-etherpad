@@ -67,5 +67,4 @@ jobs:
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
           build-args: |
             BUILD_FROM=${{ matrix.base }}
-            ETHERPAD_VERSION=${{ steps.manifest.outputs.version }}
           cosign: "false"
