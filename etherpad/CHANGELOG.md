@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.1.9
+
+- Drop the bundled AppArmor profile — it didn't allow
+  `s6-overlay-suexec` at `/package/admin/...`, so the addon failed to
+  boot with `Permission denied` on startup. Will re-introduce a
+  profile in a later release with paths verified against the HA
+  base's actual s6 layout.
+
 ## 3.1.8
 
 - Fix HA ingress when `ssl: true`. Previously enabling SSL made
