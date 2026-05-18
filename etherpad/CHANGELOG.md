@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.1.13
+
+- Fix plugin installer: switch from `bashio::config` (which returned
+  the array in a form jq couldn't reparse on some HA supervisor
+  builds) to reading `/data/options.json` directly via jq.
+  Symptom was `jq: parse error: Invalid numeric literal at line 2,
+  column 0` from `20-plugins.sh` and the container halting on boot.
+- Treat exit code 143 (SIGTERM, graceful shutdown) as normal in the
+  `finish` scripts for both `etherpad` and `etherpad-proxy` services,
+  so a clean stop during an addon update no longer logs as a crash.
+
 ## 3.1.12
 
 - Reorder the `plugins:` option above the SSL block so it doesn't

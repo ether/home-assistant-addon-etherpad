@@ -11,34 +11,35 @@
 set -e
 
 EP_DIR=/opt/etherpad-lite
+OPTIONS=/data/options.json
 
-# bashio::config 'plugins' returns the raw JSON array; empty list means skip.
-plugins=$(bashio::config 'plugins')
-if [ "${plugins}" = "null" ] || [ -z "${plugins}" ]; then
+# Use jq directly: bashio::config returns the array's JSON in a form that
+# downstream jq parses inconsistently in some HA supervisor versions.
+plugins=$(jq -r '.plugins // [] | .[]' "${OPTIONS}" 2>/dev/null || true)
+
+if [ -z "${plugins}" ]; then
   bashio::log.info "No plugins declared in addon config; skipping installer."
   exit 0
 fi
 
-count=$(echo "${plugins}" | jq -r 'length')
-if [ "${count}" -eq 0 ]; then
-  bashio::log.info "Empty plugin list; skipping installer."
-  exit 0
-fi
-
+count=$(printf '%s\n' "${plugins}" | grep -cv '^$')
 bashio::log.info "Installing ${count} declared plugin(s)..."
 
 cd "${EP_DIR}"
-for plugin in $(echo "${plugins}" | jq -r '.[]'); do
+while IFS= read -r plugin; do
+  [ -z "${plugin}" ] && continue
   if [ -d "${EP_DIR}/node_modules/${plugin}" ]; then
     bashio::log.info "  ${plugin}: already installed, skipping"
     continue
   fi
   bashio::log.info "  ${plugin}: installing..."
-  if pnpm run plugins i "${plugin}" 2>&1 | tail -5; then
+  if pnpm run plugins i "${plugin}"; then
     bashio::log.info "  ${plugin}: OK"
   else
     bashio::log.warning "  ${plugin}: install failed (check the npm package name); continuing"
   fi
-done
+done <<EOF
+${plugins}
+EOF
 
 bashio::log.info "Plugin install complete."

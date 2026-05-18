@@ -5,7 +5,11 @@
 # anything else is a real fault — tell s6 to bring the container down so
 # the supervisor can restart it cleanly.
 # ==============================================================================
-if [[ "${1}" -ne 0 ]] && [[ "${1}" -ne 256 ]]; then
+# Normal exits we don't treat as crashes:
+#   0     — clean exit
+#   143   — SIGTERM (graceful shutdown, e.g. during addon update/restart)
+#   256   — s6's "killed by signal" placeholder
+if [[ "${1}" -ne 0 ]] && [[ "${1}" -ne 143 ]] && [[ "${1}" -ne 256 ]]; then
   bashio::log.warning "Etherpad crashed (exit=${1}), halting add-on."
   exec /run/s6/basedir/bin/halt
 fi
