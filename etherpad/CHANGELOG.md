@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.1.16
+
+- **Admin/User login now actually works.** Upstream Etherpad's
+  `settings.json.docker` defaults `authenticationMethod` to `sso`,
+  which needs an external OIDC server — so `users.admin.password`
+  and `users.user.password` were silently ignored. cont-init now
+  exports `AUTHENTICATION_METHOD=apikey` to flip back to the
+  password-based path that matches the add-on's options.
+- Reorder + relabel the Configuration tab for clarity:
+  - "Admin · Password" (username is hard-coded `admin`)
+  - "Users · Require Login"
+  - "Users · Password" (username is hard-coded `user`)
+
+  Visually groups admin and user auth as their own clusters. HA's
+  add-on schema has no real section-headers concept, so positioning
+  + label prefixes are the best we can do.
+
 ## 3.1.15
 
 - Set `CI=true` in the container env so `pnpm run plugins i` doesn't

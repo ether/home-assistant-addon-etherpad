@@ -16,6 +16,12 @@ mkdir -p "$(dirname "${ENV_FILE}")"
   echo "export LOGLEVEL=$(bashio::config 'log_level')"
   echo "export DEFAULT_PAD_TEXT=$(bashio::config 'default_pad_text' | jq -Rr @sh)"
 
+  # Force the legacy users.admin.password / users.user.password auth path
+  # instead of the upstream Docker default of `sso`. SSO needs an external
+  # OIDC server most HA users don't run; with the default, the HA-side
+  # admin_password / user_password fields silently did nothing.
+  echo "export AUTHENTICATION_METHOD=apikey"
+
   admin_pw=$(bashio::config 'admin_password')
   if bashio::var.has_value "${admin_pw}"; then
     echo "export ADMIN_PASSWORD=$(printf '%s' "${admin_pw}" | jq -Rr @sh)"

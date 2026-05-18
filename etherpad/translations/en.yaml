@@ -5,29 +5,44 @@ configuration:
     description: >-
       Name shown in the Etherpad browser tab and in Open Graph / share
       previews. Free-form text.
-  require_authentication:
-    name: Require Authentication
-    description: >-
-      When enabled, every pad and the home page demand a username and
-      password before opening. Leave off for a friction-free private
-      instance behind your LAN.
-  admin_password:
-    name: Admin Password
-    description: >-
-      Password for the built-in `admin` account that can manage plugins
-      and inspect every pad at `/admin`. Stored in plaintext in the
-      supervisor's options database — leave blank to disable admin
-      access entirely.
-  user_password:
-    name: User Password
-    description: >-
-      Password for the built-in `user` account (read/write access to
-      pads). Optional; ignored when authentication is disabled.
   default_pad_text:
     name: Default Pad Text
     description: >-
       Content inserted into every newly-created pad. Useful for a
       welcome message or template instructions.
+  log_level:
+    name: Log Level
+    description: >-
+      Verbosity of Etherpad's server log shown in the Log tab.
+  plugins:
+    name: Plugins
+    description: >-
+      List of npm package names of Etherpad plugins to install on
+      startup, e.g. `ep_headings2`, `ep_hash_auth`. Already-installed
+      plugins are skipped. Plugins added via the in-app
+      `/admin/plugins` UI still work for ad-hoc experimentation, but
+      only entries in this list are guaranteed to survive add-on
+      updates.
+  admin_password:
+    name: "Admin · Password"
+    description: >-
+      Password for the built-in `admin` account (used to log in to
+      `/admin`, install plugins, manage settings). The username is
+      always `admin`. Leave blank to disable admin login entirely.
+      Stored in plaintext in HA's supervisor options database.
+  require_authentication:
+    name: "Users · Require Login"
+    description: >-
+      When **on**, every pad and the home page demand a username and
+      password before opening — for the *user* account below, not the
+      admin one above. Leave **off** for a friction-free private
+      instance behind your LAN.
+  user_password:
+    name: "Users · Password"
+    description: >-
+      Password for the built-in `user` account (read/write access to
+      pads, no admin rights). The username is always `user`. Only
+      used when "Users · Require Login" is on.
   db_type:
     name: Database Backend
     description: >-
@@ -65,10 +80,6 @@ configuration:
       Tell Etherpad to honour `X-Forwarded-For` and `X-Forwarded-Proto`
       from upstream proxies. Keep ON for ingress and reverse-proxy
       setups (which is the typical HA path).
-  log_level:
-    name: Log Level
-    description: >-
-      Verbosity of Etherpad's server log shown in the Log tab.
   ssl:
     name: Enable Direct HTTPS
     description: >-
@@ -89,14 +100,5 @@ configuration:
       Name of the private-key file inside HA's `/ssl/` directory.
       `privkey.pem` is the standard layout. Only used when "Enable
       Direct HTTPS" is on.
-  plugins:
-    name: Plugins
-    description: >-
-      List of npm package names of Etherpad plugins to install on
-      startup, e.g. `ep_headings2`, `ep_hash_auth`. Already-installed
-      plugins are skipped. Plugins added via the in-app
-      `/admin/plugins` UI still work for ad-hoc experimentation, but
-      only entries in this list are guaranteed to survive add-on
-      updates.
 network:
   9001/tcp: Etherpad web port (direct LAN/WAN access, bypasses ingress)
