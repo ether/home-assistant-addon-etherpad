@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.1.10
+
+- Make the new `services.d/etherpad-proxy/{run,finish}` scripts
+  executable (committed as 0644 in 3.1.8/9; s6 silently failed to
+  start the service which then halted the whole container with a
+  misleading `s6-overlay-suexec: Permission denied` shutdown error).
+
 ## 3.1.9
 
 - Drop the bundled AppArmor profile — it didn't allow
