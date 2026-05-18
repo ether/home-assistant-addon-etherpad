@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.1.14
+
+- Plugin installer rewrite: drop `set -e` and `bashio::log.*` from
+  the script. One plugin failing now logs a warning and continues
+  instead of bailing the cont-init script with exit 5 and halting
+  the whole container.
+
 ## 3.1.13
 
 - Fix plugin installer: switch from `bashio::config` (which returned
