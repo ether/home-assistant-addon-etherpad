@@ -1,5 +1,5 @@
 name: Etherpad
-version: "3.1.11"
+version: "3.1.12"
 slug: etherpad
 description: Realtime collaborative document editor
 url: https://etherpad.org
@@ -34,10 +34,10 @@ options:
   db_type: sqlite
   trust_proxy: true
   log_level: INFO
+  plugins: []
   ssl: false
   certfile: fullchain.pem
   keyfile: privkey.pem
-  plugins: []
 schema:
   title: str
   require_authentication: bool
@@ -52,9 +52,9 @@ schema:
   db_password: password?
   trust_proxy: bool
   log_level: list(DEBUG|INFO|WARN|ERROR)
+  plugins:
+    - str
   ssl: bool
   certfile: str
   keyfile: str
-  plugins:
-    - str
 image: ghcr.io/ether/home-assistant-addon-etherpad-{arch}

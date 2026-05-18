@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.1.12
+
+- Reorder the `plugins:` option above the SSL block so it doesn't
+  read as a sub-option of "Enable Direct HTTPS" in the HA UI. HA's
+  add-on schema has no section-header concept, so positioning is the
+  only visual separation.
+
 ## 3.1.11
 
 - New `plugins:` addon option — declarative list of Etherpad plugin
