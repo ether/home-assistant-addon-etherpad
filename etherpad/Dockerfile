@@ -12,7 +12,8 @@ FROM ${BUILD_FROM}
 ARG ETHERPAD_VERSION
 ENV ETHERPAD_VERSION=${ETHERPAD_VERSION} \
     NODE_ENV=production \
-    ETHERPAD_PRODUCTION=true
+    ETHERPAD_PRODUCTION=true \
+    CI=true
 
 RUN apk add --no-cache \
       bash \

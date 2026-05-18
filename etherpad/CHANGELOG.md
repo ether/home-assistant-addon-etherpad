@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.1.15
+
+- Set `CI=true` in the container env so `pnpm run plugins i` doesn't
+  bail with `ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY`. The plugin
+  installer pnpm uses internally calls `pnpm install --production`
+  which tries to purge `node_modules` and prompts without a TTY; the
+  `CI=true` hint flips that to non-interactive mode. Same root cause
+  as 3.1.2's `pnpm run prod` fix — just hit on a different code path.
+
 ## 3.1.14
 
 - Plugin installer rewrite: drop `set -e` and `bashio::log.*` from
