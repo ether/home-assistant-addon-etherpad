@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.1.11
+
+- New `plugins:` addon option — declarative list of Etherpad plugin
+  npm packages (e.g. `ep_headings2`) installed on startup. Entries
+  not yet present are installed via `pnpm run plugins i <name>`;
+  already-installed ones are skipped, so reboots are fast. Survives
+  add-on upgrades because the list lives in HA config, not the
+  container fs. The in-app `/admin/plugins` UI still works for
+  ad-hoc installs (but those are wiped on add-on update).
+
 ## 3.1.10
 
 - Make the new `services.d/etherpad-proxy/{run,finish}` scripts

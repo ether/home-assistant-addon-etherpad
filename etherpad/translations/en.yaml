@@ -89,5 +89,14 @@ configuration:
       Name of the private-key file inside HA's `/ssl/` directory.
       `privkey.pem` is the standard layout. Only used when "Enable
       Direct HTTPS" is on.
+  plugins:
+    name: Plugins
+    description: >-
+      List of npm package names of Etherpad plugins to install on
+      startup, e.g. `ep_headings2`, `ep_hash_auth`. Already-installed
+      plugins are skipped. Plugins added via the in-app
+      `/admin/plugins` UI still work for ad-hoc experimentation, but
+      only entries in this list are guaranteed to survive add-on
+      updates.
 network:
   9001/tcp: Etherpad web port (direct LAN/WAN access, bypasses ingress)

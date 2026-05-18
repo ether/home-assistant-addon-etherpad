@@ -29,6 +29,35 @@ updates.
    - **Direct port**: `http://<ha-host>:9001` (or `https://` when SSL
      is enabled below).
 
+## Plugins
+
+Etherpad has [a large plugin ecosystem](https://static.etherpad.org/plugins.html)
+shipped as npm packages.
+
+### Declarative (recommended)
+
+In the **Configuration tab**, add npm package names to the **Plugins**
+list:
+
+```yaml
+plugins:
+  - ep_headings2
+  - ep_hash_auth
+  - ep_align
+```
+
+Save and restart. On every boot the add-on installs anything in this
+list that isn't already present, so plugins **survive add-on
+updates** without manual intervention.
+
+### Ad-hoc via the in-app UI
+
+Set an `admin_password`, restart, then visit
+`https://<ha-host>:9001/admin/plugins`. Etherpad's built-in installer
+works there too — useful for experimenting before committing a plugin
+to the declarative list. Plugins installed only this way are wiped
+the next time the add-on is updated.
+
 ## SSL / HTTPS
 
 Flip `Enable Direct HTTPS` in the Configuration tab to make Etherpad
