@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.17
+
+- Track upstream Etherpad 3.2.0 release.
+
+
 ## 3.1.16
 
 - **Admin/User login now actually works.** Upstream Etherpad's
