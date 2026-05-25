@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   bump:
@@ -62,3 +63,13 @@ jobs:
           git add etherpad/Dockerfile etherpad/config.yaml etherpad/CHANGELOG.md
           git commit -m "Auto-bump to upstream Etherpad ${NEW_UPSTREAM} (addon ${new_addon})"
           git push origin HEAD:main
+
+      - name: Trigger Builder
+        # The push above is authenticated with GITHUB_TOKEN, and GitHub
+        # deliberately suppresses workflow runs triggered by that token to
+        # avoid action loops. workflow_dispatch is the documented exception,
+        # so explicitly invoke Builder to build/publish the new addon image.
+        if: steps.ver.outputs.latest != steps.ver.outputs.current && steps.ver.outputs.latest != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run builder.yml --ref main --repo "${{ github.repository }}"
