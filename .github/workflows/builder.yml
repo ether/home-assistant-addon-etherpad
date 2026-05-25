@@ -13,6 +13,7 @@ on:
     paths:
       - "etherpad/**"
       - ".github/workflows/builder.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
