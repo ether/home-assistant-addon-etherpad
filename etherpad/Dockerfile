@@ -1,5 +1,5 @@
 ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:latest
-ARG ETHERPAD_VERSION=3.3.1
+ARG ETHERPAD_VERSION=3.3.2
 
 # Stage 1: pull the pre-built Etherpad tree (incl. node + pnpm) from the
 # official image. Both the upstream image and the HA base use Alpine, so
