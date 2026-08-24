@@ -6,15 +6,24 @@
 # ==============================================================================
 set -e
 
+# `jq -R` reads each *line* of its input as a separate string, so any multi-line
+# option value emitted one shell-quoted string per line. Every line after the
+# first then parsed as a stray command when the env file was sourced, and the
+# add-on died with exit 127 — which the stock multi-line `default_pad_text` hit
+# on a default install. `-Rs` slurps the whole input into a single string; the
+# `sub` drops the one trailing newline bashio appends so values round-trip
+# unchanged.
+sh_quote() { jq -Rsr 'sub("\n$"; "") | @sh'; }
+
 ENV_FILE=/etc/etherpad/env
 mkdir -p "$(dirname "${ENV_FILE}")"
 
 {
-  echo "export TITLE=$(bashio::config 'title' | jq -Rr @sh)"
+  echo "export TITLE=$(bashio::config 'title' | sh_quote)"
   echo "export REQUIRE_AUTHENTICATION=$(bashio::config 'require_authentication')"
   echo "export TRUST_PROXY=$(bashio::config 'trust_proxy')"
   echo "export LOGLEVEL=$(bashio::config 'log_level')"
-  echo "export DEFAULT_PAD_TEXT=$(bashio::config 'default_pad_text' | jq -Rr @sh)"
+  echo "export DEFAULT_PAD_TEXT=$(bashio::config 'default_pad_text' | sh_quote)"
 
   # Force the legacy users.admin.password / users.user.password auth path
   # instead of the upstream Docker default of `sso`. SSO needs an external
@@ -24,14 +33,14 @@ mkdir -p "$(dirname "${ENV_FILE}")"
 
   admin_pw=$(bashio::config 'admin_password')
   if bashio::var.has_value "${admin_pw}"; then
-    echo "export ADMIN_PASSWORD=$(printf '%s' "${admin_pw}" | jq -Rr @sh)"
+    echo "export ADMIN_PASSWORD=$(printf '%s' "${admin_pw}" | sh_quote)"
   else
     echo "export ADMIN_PASSWORD=null"
   fi
 
   user_pw=$(bashio::config 'user_password')
   if bashio::var.has_value "${user_pw}"; then
-    echo "export USER_PASSWORD=$(printf '%s' "${user_pw}" | jq -Rr @sh)"
+    echo "export USER_PASSWORD=$(printf '%s' "${user_pw}" | sh_quote)"
   else
     echo "export USER_PASSWORD=null"
   fi
@@ -52,7 +61,7 @@ mkdir -p "$(dirname "${ENV_FILE}")"
       echo "export DB_PORT=$(bashio::config 'db_port')"
       echo "export DB_NAME=$(bashio::config 'db_name')"
       echo "export DB_USER=$(bashio::config 'db_user')"
-      echo "export DB_PASS=$(bashio::config 'db_password' | jq -Rr @sh)"
+      echo "export DB_PASS=$(bashio::config 'db_password' | sh_quote)"
       ;;
   esac
 
