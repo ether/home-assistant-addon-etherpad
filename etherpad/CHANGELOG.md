@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.1.22
+
+- Fix add-on crash-looping on a default install. Multi-line option values were
+  rendered one shell-quoted string per line, so every line after the first was
+  sourced as a stray command and the env file exited 127. The stock multi-line
+  `default_pad_text` triggered this, so the add-on failed to start out of the box.
+
+
 ## 3.1.21
 
 - Track upstream Etherpad 3.3.3 release.
