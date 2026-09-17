@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.23
+
+- Track upstream Etherpad 3.3.5 release.
+
+
 ## 3.1.22
 
 - Fix add-on crash-looping on a default install. Multi-line option values were
