@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.28
+
+- Track upstream Etherpad 3.3.10 release.
+
+
 ## 3.1.27
 
 - Track upstream Etherpad 3.3.9 release.
