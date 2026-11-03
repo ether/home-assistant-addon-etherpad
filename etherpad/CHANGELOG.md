@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.32
+
+- Fix Etherpad failing to start ("Failed to switch pnpm to v12.4.2 ... ENOEXEC"): install the pnpm version Etherpad pins instead of pnpm 10.
+
+
 ## 3.1.31
 
 - Track upstream Etherpad 3.3.13 release.

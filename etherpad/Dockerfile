@@ -29,10 +29,19 @@ COPY --from=upstream /opt/etherpad-lite /opt/etherpad-lite
 
 # pnpm is needed at runtime for Etherpad's plugin-migration step.
 # Apk's node is smaller than upstream's statically-built binary, so we
-# re-install pnpm rather than copying the larger upstream layout.
-RUN npm install -g pnpm@10.33.0 \
+# re-install pnpm rather than copying the larger upstream layout. Install the
+# version Etherpad's packageManager pins, as upstream does: any other version
+# makes pnpm download the pinned one on every call, and on aarch64 that
+# download fails with ENOEXEC and Etherpad exits at boot.
+# pnpm_config_pm_on_fail=ignore keeps pnpm on the installed version if the
+# two ever drift apart again.
+ENV pnpm_config_pm_on_fail=ignore
+RUN PNPM_VERSION="$(node -p "require('/opt/etherpad-lite/package.json').packageManager.split('@')[1]")" \
+ && npm install -g "pnpm@${PNPM_VERSION}" \
  && npm cache clean --force \
- && rm -rf /root/.npm
+ && rm -rf /root/.npm \
+ && cd /opt/etherpad-lite \
+ && test "$(pnpm --version)" = "${PNPM_VERSION}"
 
 COPY rootfs/ /
 
