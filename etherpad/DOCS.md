@@ -58,6 +58,55 @@ works there too — useful for experimenting before committing a plugin
 to the declarative list. Plugins installed only this way are wiped
 the next time the add-on is updated.
 
+## Extra settings (`settings_json`)
+
+The **Settings JSON** option takes a JSON object that is merged into
+Etherpad's `settings.json` at boot. Use it for plugin settings blocks
+(`ep_*` keys) or any core setting the add-on doesn't expose as its own
+option.
+
+The add-on writes it to Etherpad's `credentials.json`, which Etherpad
+loads after `settings.json`. Top-level keys win. When both values are
+objects they are merged one level deep, so you only need to list the
+keys you change. `${ENV_VAR}` placeholders are substituted as in
+`settings.json`. Comments are not allowed: it must be plain JSON.
+
+If the JSON is invalid, the add-on logs an error, ignores the option
+and starts Etherpad with the defaults. Leave it empty to change nothing.
+
+**The value is stored in plaintext in HA's add-on options, the same as
+`admin_password`.** The add-on never logs its contents, only the
+top-level key names.
+
+### Example: Claude in your pads
+
+Install [`ep_ai_core`](https://www.npmjs.com/package/ep_ai_core) and
+[`ep_ai_chat`](https://www.npmjs.com/package/ep_ai_chat), then give
+`ep_ai_core` your Anthropic API key:
+
+```yaml
+plugins:
+  - ep_ai_core
+  - ep_ai_chat
+settings_json: |
+  {
+    "ep_ai_core": {
+      "provider": "anthropic",
+      "apiBaseUrl": "https://api.anthropic.com/v1",
+      "apiKey": "sk-ant-...",
+      "model": "claude-sonnet-5-5",
+      "chat": {
+        "trigger": "@claude",
+        "authorName": "Claude"
+      }
+    }
+  }
+```
+
+Restart the add-on, open a pad and type `@claude` in the chat. Keep
+`apiBaseUrl` set: without it the plugin loads but every request fails.
+See the plugin's README for all its options.
+
 ## SSL / HTTPS
 
 Flip `Enable Direct HTTPS` in the Configuration tab to make Etherpad

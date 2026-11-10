@@ -31,20 +31,24 @@ if [ -z "${plugins}" ]; then
 fi
 
 log "Installing declared plugin(s):"
-log "${plugins}" | sed 's/^/  - /'
+printf '%s\n' "${plugins}" | sed 's/^/[plugins]   - /'
 
-cd "${EP_DIR}" || { log "Cannot cd into ${EP_DIR}; aborting."; exit 0; }
+# Run Etherpad's plugin CLI with node directly. `pnpm run plugins` makes pnpm
+# check the workspace lockfile first, and in the image that check fails with
+# ERR_PNPM_OUTDATED_LOCKFILE, so no plugin ever got installed.
+cd "${EP_DIR}/bin" || { log "Cannot cd into ${EP_DIR}/bin; aborting."; exit 0; }
 
 # shellcheck disable=SC2034
 exit_code=0
 while IFS= read -r plugin; do
   [ -z "${plugin}" ] && continue
-  if [ -d "${EP_DIR}/node_modules/${plugin}" ]; then
+  # Etherpad installs plugins into src/plugin_packages, not node_modules.
+  if [ -d "${EP_DIR}/src/plugin_packages/${plugin}" ]; then
     log "  ${plugin}: already installed, skipping"
     continue
   fi
   log "  ${plugin}: installing..."
-  if pnpm run plugins i "${plugin}"; then
+  if node --import tsx ./plugins.ts i "${plugin}"; then
     log "  ${plugin}: OK"
   else
     log "  ${plugin}: install failed (check the npm package name); continuing"
