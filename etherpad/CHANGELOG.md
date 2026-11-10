@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.37
+
+- Health check now probes `/health` instead of `/`. With authentication on, `/` returns 401, so the container was marked unhealthy and HA stuck at "The app is starting".
+
+
 ## 3.1.36
 
 - `settings_json`: write credentials.json atomically and check the result, so a failed write can no longer leave a partial file or claim the settings were applied.
