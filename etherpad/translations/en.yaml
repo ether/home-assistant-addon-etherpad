@@ -23,6 +23,14 @@ configuration:
       `/admin/plugins` UI still work for ad-hoc experimentation, but
       only entries in this list are guaranteed to survive add-on
       updates.
+  settings_json:
+    name: Settings JSON
+    description: >-
+      Optional JSON object merged into Etherpad's settings.json at boot,
+      e.g. `{"ep_ai_core": {"apiKey": "..."}}`. Any top-level key works:
+      plugin blocks and core settings. Invalid JSON is logged and ignored.
+      Stored in plaintext in HA's supervisor options database. See the
+      Documentation tab for an example.
   admin_password:
     name: "Admin · Password"
     description: >-

@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.35
+
+- Add a `settings_json` option: a JSON object merged into Etherpad's settings at boot (via credentials.json), for plugin blocks such as `ep_ai_core` and other settings. Invalid JSON is logged and ignored.
+- Fix the `plugins` option never installing anything: `pnpm run plugins` failed with ERR_PNPM_OUTDATED_LOCKFILE, so the installer now runs Etherpad's plugin CLI with node directly, and it detects installed plugins in `src/plugin_packages`.
+
+
 ## 3.1.34
 
 - Track upstream Etherpad 3.3.16 release.
