@@ -23,7 +23,9 @@ CREDENTIALS=/opt/etherpad-lite/credentials.json
 OPTIONS=/data/options.json
 
 # A stale file from an earlier boot must never outlive the option.
-rm -f "${CREDENTIALS}"
+if ! rm -f "${CREDENTIALS}"; then
+  bashio::log.error "Could not remove an old ${CREDENTIALS}; Etherpad may start with stale settings."
+fi
 
 if [ ! -f "${OPTIONS}" ]; then
   exit 0
@@ -46,7 +48,15 @@ if ! printf '%s' "${settings_json}" | jq -se 'length == 1 and (.[0] | type == "o
   exit 0
 fi
 
-( umask 077 && printf '%s' "${settings_json}" | jq . > "${CREDENTIALS}" )
-keys=$(jq -r 'keys_unsorted | join(", ")' "${CREDENTIALS}")
-bashio::log.info "settings_json applied via ${CREDENTIALS} (top-level keys: ${keys})."
+# Write to a temp file and move it into place only once it is complete, so a
+# failed write can never leave a partial credentials.json for Etherpad to
+# choke on.
+tmp="${CREDENTIALS}.tmp.$$"
+if ( umask 077 && printf '%s' "${settings_json}" | jq . > "${tmp}" ) && mv -f "${tmp}" "${CREDENTIALS}"; then
+  keys=$(jq -r 'keys_unsorted | join(", ")' "${CREDENTIALS}")
+  bashio::log.info "settings_json applied via ${CREDENTIALS} (top-level keys: ${keys})."
+else
+  rm -f "${tmp}" "${CREDENTIALS}"
+  bashio::log.error "Could not write ${CREDENTIALS}; starting Etherpad with the add-on defaults."
+fi
 exit 0

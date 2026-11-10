@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.36
+
+- `settings_json`: write credentials.json atomically and check the result, so a failed write can no longer leave a partial file or claim the settings were applied.
+
+
 ## 3.1.35
 
 - Add a `settings_json` option: a JSON object merged into Etherpad's settings at boot (via credentials.json), for plugin blocks such as `ep_ai_core` and other settings. Invalid JSON is logged and ignored.
