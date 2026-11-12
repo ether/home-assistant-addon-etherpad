@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.38
+
+- Track upstream Etherpad 3.3.17 release.
+
+
 ## 3.1.37
 
 - Health check now probes `/health` instead of `/`. With authentication on, `/` returns 401, so the container was marked unhealthy and HA stuck at "The app is starting".
