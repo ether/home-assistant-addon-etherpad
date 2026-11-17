@@ -186,6 +186,12 @@ for your HA UI, the same `fullchain.pem` works here for free.
   internal 9002 port, so both work simultaneously.)
 - **`SSL_ERROR_RX_RECORD_TOO_LONG`** — `ssl` is off but you tried
   HTTPS. Flip the **Enable Direct HTTPS** toggle and restart.
+- **Chat won't send / pad stuck on "Reconnecting…"** with `Rate limited
+  IP` in the log — Etherpad's per-IP message limit is being hit. All
+  clients on port 9001 come through the socat front-man and share one
+  IP, so the add-on raises `commitRateLimiting.points` to 100. Raise it
+  further via `settings_json`, for example
+  `{"commitRateLimiting": {"points": 200}}`.
 - **Slow startup (~30 s)** — Etherpad scans installed plugins on
   boot. The add-on's `HEALTHCHECK` has a 120 s grace period so this
   won't trip the supervisor watchdog.

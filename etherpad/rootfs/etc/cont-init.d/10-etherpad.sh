@@ -72,6 +72,15 @@ mkdir -p "$(dirname "${ENV_FILE}")"
   echo "export PORT=9002"
   echo "export IP=0.0.0.0"
 
+  # Etherpad <= 3.3.18 rate limits pad messages per client IP (10/s). The
+  # socat front-man below is TCP-level, so every browser on port 9001 reaches
+  # Etherpad as 127.0.0.1 and all tabs and devices share one budget: a couple
+  # of tabs joining a pad (ep_webrtc especially) trip it and kick each other
+  # in a reconnect loop. Raise the shared budget. Users can still override
+  # commitRateLimiting via settings_json. Drop this once the add-on tracks a
+  # core release that limits per connection (ether/etherpad#8498).
+  echo "export COMMIT_RATE_LIMIT_POINTS=100"
+
   # SSL: render the socat invocation for /etc/etherpad/proxy. When `ssl: true`
   # we terminate TLS using HA's mounted /ssl/ certs; otherwise we plain-TCP
   # forward. The front-man is always present so ingress_port (9002) and

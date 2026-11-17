@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.39
+
+- Raise the default `commitRateLimiting.points` from 10 to 100. Every browser reaches Etherpad through the socat front-man with the same IP, so tabs and devices shared one 10 messages/second budget. Joining a pad with several tabs (especially with ep_webrtc) tripped it, dropped chat messages, and left the pad on "Reconnecting…".
+
+
 ## 3.1.38
 
 - Track upstream Etherpad 3.3.17 release.
